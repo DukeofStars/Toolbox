@@ -5,7 +5,6 @@ using System.Windows.Forms;
 
 using ToolBox2.Main;
 using ToolBox2.Apps;
-using ToolBox2.Util;
 
 namespace ToolBox2.Pages.InstalledPage
 {

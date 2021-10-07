@@ -78,6 +78,12 @@
     <Compile Include="Pages\AppButton.Designer.cs">
       <DependentUpon>AppButton.cs</DependentUpon>
     </Compile>
+    <Compile Include="Pages\AppDescPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Pages\AppDescPanel.Designer.cs">
+      <DependentUpon>AppDescPanel.cs</DependentUpon>
+    </Compile>
     <Compile Include="Pages\InstalledPage\InstalledPanel.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -94,6 +100,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Pages\AppButton.resx">
       <DependentUpon>AppButton.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Pages\AppDescPanel.resx">
+      <DependentUpon>AppDescPanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -119,6 +128,8 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="bin\Debug\icons\run.png" />
+    <None Include="bin\Debug\icons\start.png" />
     <Content Include="Resources\install-icon 20x20 .png" />
     <Content Include="Resources\install.png" />
     <Content Include="Resources\uninstall-delete.png" />
