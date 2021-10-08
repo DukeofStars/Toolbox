@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+
+using ToolBox2.Main;
 
 namespace ToolBox2.Pages
 {
@@ -40,5 +36,40 @@ namespace ToolBox2.Pages
                 this.lbl_name.Text = value;
             }
         }
+
+        public void Slide(Direction direction)
+        {
+            if (direction == Direction.LEFT)
+            {
+                this.Enabled = false;
+                while (this.Location.X > 200)
+                {
+                    this.BringToFront();
+                    this.Location = new Point(this.Location.X - 2, 0);
+                }
+                this.Enabled = true;
+            }
+            else if (direction == Direction.RIGHT)
+            {
+                this.Enabled = false;
+                while (this.Location.X < 1160)
+                {
+                    this.BringToFront();
+                    this.Location = new Point(this.Location.X + 2, 0);
+                }
+                this.Enabled = true;
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+        }
+    }
+    public enum Direction 
+    {
+        UP,
+        DOWN,
+        LEFT,
+        RIGHT
     }
 }

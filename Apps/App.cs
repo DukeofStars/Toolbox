@@ -21,7 +21,7 @@ namespace ToolBox2.Apps
             {
                 return File.ReadAllText(infoPath);
             }
-            else return "%%NULL%%";
+            else return "Could not find info.txt file for this app";
         }
     }
 }

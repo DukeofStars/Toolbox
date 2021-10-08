@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using System.Threading;
 using System.Windows.Forms;
 
 using ToolBox2.Apps;
@@ -57,22 +56,19 @@ namespace ToolBox2.Pages
 
         private void OpenAppPanel(object sender, MouseEventArgs e)
         {
-            MessageBox.Show("Opening app panel!");
-            AppDescPanel panel = new AppDescPanel();
-            panel.Parent = MainWindow.self;
-            panel.Location = new Point(1160, 0);
-            panel.Name = this.app.Name;
-            panel.Description = this.app.GetDescription();
-            panel.Visible = true;
-            panel.Enabled = false;
-            panel.BringToFront();
-            while(panel.Location.X > 200)
+            if (this.app.Installed)
             {
+                AppDescPanel panel = new AppDescPanel();
+                panel.Parent = MainWindow.self;
+                panel.Location = new Point(1160, 0);
+                panel.Name = this.app.Name;
+                panel.Description = this.app.GetDescription();
+                panel.Visible = true;
                 panel.BringToFront();
-                panel.Location = new Point(panel.Location.X - 2, 0);
+                panel.Slide(Direction.LEFT);
+                Header.SetPage(Page.APPDESC, panel);
+                MainWindow.self.ClearPage();
             }
-            Header.SetPage(Page.APPDESC, panel);
-            MainWindow.self.ClearPage();
         }
     }
 }

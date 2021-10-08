@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using ToolBox2.Pages.InstalledPage;
 using ToolBox2.Pages.UnInstalledPage;
 using ToolBox2.Util;
+using ToolBox2.Pages;
 
 namespace ToolBox2.Main
 {
@@ -93,20 +94,14 @@ namespace ToolBox2.Main
 
         public void menupanel_InstalledBtn_Click(object sender, MouseEventArgs e)
         {
-            if (Header.currentPage != Page.INSTALLED)
-            {
-                Header.SetPage(Page.INSTALLED);
-                this.Invalidate();
-            }
+            Header.SetPage(Page.INSTALLED);
+            this.Invalidate();
         }
 
         public void menupanel_UnInstalledBtn_Click(object sender, MouseEventArgs e)
         {
-            if (Header.currentPage != Page.UNINSTALLED)
-            {
-                Header.SetPage(Page.UNINSTALLED);
-                this.Invalidate();
-            }
+            Header.SetPage(Page.UNINSTALLED);
+            this.Invalidate();
         }
 
         public void Save(object sender, FormClosingEventArgs e)
@@ -159,6 +154,7 @@ namespace ToolBox2.Main
 
         protected override void OnPaint(PaintEventArgs e)
         {
+            MessageBox.Show($"current page = {Header.currentPage}, prev page = {Header.prevPage}");
             if (Header.currentPage == Page.INSTALLED)
             {
                 if (Header.prevPage != Page.INSTALLED) 

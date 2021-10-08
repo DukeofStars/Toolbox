@@ -49,24 +49,21 @@ namespace ToolBox2.Apps
 
         public void UnInstall()
         {
-            // Delete Files
-            try
+            // Initialize
+            this.progress = new LoadingForm
             {
-                if (File.Exists(this.AppMainPath + @"\uninstall.exe"))
-                    Process.Start(this.AppMainPath + @"\uninstall.exe");
-                if (Directory.Exists(this.AppMainPath))
-                    Directory.Delete(this.AppMainPath, true);
-                if (this.App.HasConfig && Directory.Exists(this.App.ConfigFolderPath))
-                    Directory.Delete(this.App.ConfigFolderPath);
-            }
-            catch (UnauthorizedAccessException)
-            {
-                Util.Utilities.RestartWithAdmin();
-                return;
-            }
-
-            // Finish up
-            this.App.Installed = false;
+                Visible = true,
+                Status = "Initializing",
+                Enabled = true,
+                Progress = 0,
+                MaxLength = 3,
+                StepLength = 1
+            };
+            this.progress.BringToFront();
+            ThreadStart threadStart = new ThreadStart(() => this.RunUnInstall());
+            Thread thread = new Thread(threadStart);
+            thread.Name = "uninstallingthread" + Installer.amountOfInstallers;
+            thread.Start();
         }
 
         public void Install()
@@ -98,6 +95,7 @@ namespace ToolBox2.Apps
             else
             {
                 MessageBox.Show("UnInstall Complete");
+                Header.SetPage(Page.NULL);
                 Header.SetPage(Page.INSTALLED);
             }
             this.progress.Visible = false;
@@ -106,6 +104,36 @@ namespace ToolBox2.Apps
             MainWindow.self.InstalledPage.Refresh();
             MainWindow.self.UnInstalledPage.Refresh();
             MainWindow.self.Update();
+        }
+
+        private void RunUnInstall()
+        {
+            // Delete Files
+            this.progress.Invoke(new Action(() => this.BringProgressToFront()));
+            try
+            {
+                this.progress.Invoke(new Action(() => this.SetStatus("Checking for uninstall.exe")));
+                if (File.Exists(this.AppMainPath + @"\uninstall.exe"))
+                    Process.Start(this.AppMainPath + @"\uninstall.exe");
+                this.progress.Invoke(new Action(() => this.Step()));
+                this.progress.Invoke(new Action(() => this.SetStatus("Deleting files")));
+                if (Directory.Exists(this.AppMainPath))
+                    Directory.Delete(this.AppMainPath, true);
+                if (this.App.HasConfig && Directory.Exists(this.App.ConfigFolderPath))
+                    Directory.Delete(this.App.ConfigFolderPath);
+                this.progress.Invoke(new Action(() => this.Step()));
+            }
+            catch (UnauthorizedAccessException)
+            {
+                Util.Utilities.RestartWithAdmin();
+                return;
+            }
+
+            // Finish up
+            this.progress.Invoke(new Action(() => this.SetStatus("Finishing")));
+            this.App.Installed = false;
+            this.progress.Invoke(new Action(() => this.Step()));
+            this.progress.Invoke(new Action(() => this.InstallComplete(InstallResult.UNINSTALLED, null)));
         }
 
         private void RunInstall()
