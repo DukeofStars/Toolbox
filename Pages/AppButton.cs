@@ -27,10 +27,7 @@ namespace ToolBox2.Pages
             if (!this.app.Installed)
             {
                 Installer.Install(this.app);
-                MainWindow.InstalledPanel.Refresh();
-                MainWindow.UnInstalledPanel.Refresh();
-                Header.SetPage(Page.UNINSTALLED);
-                MainWindow.self.Update();
+                
             }
             else
             {
@@ -38,7 +35,7 @@ namespace ToolBox2.Pages
                 MainWindow.InstalledPanel.Refresh();
                 MainWindow.UnInstalledPanel.Refresh();
                 Header.SetPage(Page.INSTALLED);
-                MainWindow.self.Update();
+                MainWindow.self.Invalidate();
             }
         }
 

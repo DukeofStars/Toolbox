@@ -44,12 +44,12 @@ namespace ToolBox2.Main
                 }
                 foreach (App app in temp_)
                 {
-                    bool matched = false;
-                    foreach (App comp_app in apps)
-                    {
-                        if (comp_app.Name == app.Name) matched = true;
-                    }
-                    if (matched) continue;
+                    //bool matched = false;
+                    //foreach (App comp_app in apps)
+                    //{
+                    //    if (comp_app.Name == app.Name) matched = true;
+                    //}
+                    //if (matched) continue;
                     apps.Add(app);
                 }
             }

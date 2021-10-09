@@ -89,21 +89,24 @@ namespace ToolBox2.Apps
         {
             if (sender is InstallResult.INSTALLED)
             {
-                MessageBox.Show("Install Complete");
+                MessageBox.Show("Installation Complete");
                 Header.SetPage(Page.UNINSTALLED);
             }
-            else
+            else if (sender is InstallResult.UNINSTALLED)
             {
-                MessageBox.Show("UnInstall Complete");
-                Header.SetPage(Page.NULL);
+                MessageBox.Show("UnInstallation Complete");
                 Header.SetPage(Page.INSTALLED);
+            }
+            else if (sender is InstallResult.FAILED)
+            {
+                MessageBox.Show("Failed");
             }
             this.progress.Visible = false;
             this.progress.Enabled = false;
             this.progress.Dispose();
             MainWindow.self.InstalledPage.Refresh();
             MainWindow.self.UnInstalledPage.Refresh();
-            MainWindow.self.Update();
+            MainWindow.self.Invalidate();
         }
 
         private void RunUnInstall()

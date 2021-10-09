@@ -33,6 +33,8 @@ namespace ToolBox2.Main
             this.InitPages();
             this.ClearPage();
             this.Visible = true;
+            Header.SetPage(Page.NULL);
+            Header.SetPage(Page.INSTALLED);
             return this;
         }
 
@@ -87,7 +89,8 @@ namespace ToolBox2.Main
             this.UnInstalledPage.Enabled = false;
             this.UnInstalledPage.MouseDown += this.Draggable;
 
-            this.InstalledPage.Initialize();
+            this.InstalledPage.Refresh();
+            this.UnInstalledPage.Refresh();
         }
 
         // Managing
@@ -154,7 +157,7 @@ namespace ToolBox2.Main
 
         protected override void OnPaint(PaintEventArgs e)
         {
-            MessageBox.Show($"current page = {Header.currentPage}, prev page = {Header.prevPage}");
+            //MessageBox.Show("current page = " + Header.currentPage + ", prev page = " + Header.prevPage);
             if (Header.currentPage == Page.INSTALLED)
             {
                 if (Header.prevPage != Page.INSTALLED) 

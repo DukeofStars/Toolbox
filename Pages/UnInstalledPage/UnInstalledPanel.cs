@@ -13,27 +13,21 @@ namespace ToolBox2.Pages.UnInstalledPage
     {
         private List<AppButton> appButtons = new List<AppButton>();
         private List<App> apps = new List<App>();
-        public UnInstalledPanel()
+
+        public bool HasPair(App app)
         {
-            foreach (App app in InstalledPanel.Apps)
+            bool ret_val = false;
+            foreach (App comp_app in MainWindow.self.InstalledPage.GetInstalledApps())
             {
-                if (!app.Installed)
-                {
-                    this.apps.Add(app);
-                    AppButton appButton = new AppButton(app);
-                    int x = (appButtons.Count % 3) * 200 + 50;
-                    int y = (int)Math.Floor((double)appButtons.Count / 3) * 200 + 100;
-                    appButton.Visible = true;
-                    appButton.Enabled = true;
-                    appButton.Location = new Point(x, y);
-                    appButton.Parent = this;
-                    Util.Utilities.RoundBorderControl(appButton);
-                    appButton.BringToFront();
-                    appButtons.Add(appButton);
-                }
+                if (app.Name == comp_app.Name)
+                    ret_val = true;
             }
-            Header.SetPage(Page.NULL);
-            Header.SetPage(Page.UNINSTALLED);
+            foreach (App comp_app in this.apps)
+            {
+                if (app.Name == comp_app.Name)
+                    ret_val = true;
+            }
+            return ret_val;
         }
 
         public new void Refresh()
@@ -48,7 +42,7 @@ namespace ToolBox2.Pages.UnInstalledPage
             this.appButtons = new List<AppButton>();
             foreach (App app in InstalledPanel.Apps)
             {
-                if (!app.Installed)
+                if (!app.Installed && !this.HasPair(app))
                 {
                     this.apps.Add(app);
                     AppButton appButton = new AppButton(app);
@@ -63,9 +57,9 @@ namespace ToolBox2.Pages.UnInstalledPage
                     appButtons.Add(appButton);
                 }
             }
-            Header.SetPage(Page.NULL);
-            Header.SetPage(Page.UNINSTALLED);
         }
+
+        private List<App> ignored = new List<App>();
 
         public void Save()
         {

@@ -40,16 +40,17 @@ namespace ToolBox2.Main
 
         public static void SetPage(Page page, AppDescPanel panel = null)
         {
+            //MessageBox.Show("Setting page to " + page.ToString());
             if (panel != null && page == Page.APPDESC) Header.appDescPanel = panel;
-            if (page != Page.NULL)
-            {
-                Header.prevPage = Header.currentPage;
-                Header.currentPage = page;
-            }
-            else
+            if (page is Page.NULL)
             {
                 Header.prevPage = Page.NULL;
                 Header.currentPage = Page.NULL;
+            }
+            else
+            {
+                Header.prevPage = Header.currentPage;
+                Header.currentPage = page;
             }
         }
     }

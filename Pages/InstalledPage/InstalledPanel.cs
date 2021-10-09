@@ -12,28 +12,15 @@ namespace ToolBox2.Pages.InstalledPage
     {
         private List<AppButton> appButtons = new List<AppButton>();
         private List<App> apps = new List<App>();
-        public void Initialize()
+
+        private bool CheckForUpdates(App app)
         {
-            //MessageBox.Show("amount of apps = " + this.apps.Count + ", amount of set apps = " + InstalledPanel.Apps.Count);
-            foreach (App app in InstalledPanel.Apps)
+            foreach (App comp_app in InstalledPanel.Apps)
             {
-                if (app.Installed)
-                {
-                    this.apps.Add(app);
-                    AppButton appButton = new AppButton(app);
-                    int x = (appButtons.Count % 4) * 200 + 100;
-                    int y = (int)Math.Floor((double)appButtons.Count / 4) * 200 + 100;
-                    appButton.Visible = true;
-                    appButton.Enabled = true;
-                    appButton.Location = new Point(x, y);
-                    appButton.Parent = this;
-                    Util.Utilities.RoundBorderControl(appButton);
-                    appButton.BringToFront();
-                    appButtons.Add(appButton);
-                }
+                if (app.Name == comp_app.Name && app.Version < comp_app.Version)
+                    return true;
             }
-            Header.SetPage(Page.NULL);
-            Header.SetPage(Page.INSTALLED);
+            return false;
         }
 
         public new void Refresh()
@@ -61,10 +48,15 @@ namespace ToolBox2.Pages.InstalledPage
                     Util.Utilities.RoundBorderControl(appButton);
                     appButton.BringToFront();
                     appButtons.Add(appButton);
+                    if (this.CheckForUpdates(app))
+                        MessageBox.Show("Update Availible for " + app.Name);
                 }
             }
-            Header.SetPage(Page.NULL);
-            Header.SetPage(Page.INSTALLED);
+        }
+
+        public List<App> GetInstalledApps()
+        {
+            return this.apps;
         }
 
         // Data
