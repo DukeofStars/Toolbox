@@ -13,16 +13,6 @@ namespace ToolBox2.Pages.InstalledPage
         private List<AppButton> appButtons = new List<AppButton>();
         private List<App> apps = new List<App>();
 
-        private bool CheckForUpdates(App app)
-        {
-            foreach (App comp_app in InstalledPanel.Apps)
-            {
-                if (app.Name == comp_app.Name && app.Version < comp_app.Version)
-                    return true;
-            }
-            return false;
-        }
-
         public new void Refresh()
         {
             foreach (AppButton appButton in this.appButtons)
@@ -52,6 +42,16 @@ namespace ToolBox2.Pages.InstalledPage
                         MessageBox.Show("Update Availible for " + app.Name);
                 }
             }
+        }
+
+        private bool CheckForUpdates(App app)
+        {
+            foreach (App comp_app in InstalledPanel.Apps)
+            {
+                if (app.Name == comp_app.Name && app.Version < comp_app.Version)
+                    return true;
+            }
+            return false;
         }
 
         public List<App> GetInstalledApps()

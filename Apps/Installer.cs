@@ -47,41 +47,67 @@ namespace ToolBox2.Apps
             this.InstallComplete += this.Finished;
         }
 
-        public void UnInstall()
+        public void UnInstall(bool showProgress = true)
         {
             // Initialize
+            if (showProgress)
+            {
+                this.progress = new LoadingForm
+                {
+                    Visible = true,
+                    Status = "Initializing",
+                    Enabled = true,
+                    Progress = 0,
+                    MaxLength = 3,
+                    StepLength = 1
+                };
+                this.progress.BringToFront();
+            }
+            ThreadStart threadStart = new ThreadStart(() => this.RunUnInstall(showProgress));
+            Thread thread = new Thread(threadStart);
+            thread.Name = "uninstallingthread" + Installer.amountOfInstallers;
+            thread.Start();
+        }
+
+        public void Install(bool showProgress = true)
+        {
+            // Initialize
+            if (showProgress)
+            {
+                progress = new LoadingForm
+                {
+                    Visible = true,
+                    Status = "Initializing",
+                    Enabled = true,
+                    Progress = 0,
+                    MaxLength = 4,
+                    StepLength = 1
+                };
+                progress.BringToFront();
+            }
+            ThreadStart threadStart = new ThreadStart(() => this.RunInstall(showProgress));
+            Thread thread = new Thread(threadStart);
+            thread.Name = "installingthread" + Installer.amountOfInstallers;
+            thread.Start();
+        }
+
+        public void Update()
+        {
+            //Initialize
             this.progress = new LoadingForm
             {
                 Visible = true,
                 Status = "Initializing",
                 Enabled = true,
                 Progress = 0,
-                MaxLength = 3,
-                StepLength = 1
+                StepLength = 1,
+                MaxLength = 2
             };
-            this.progress.BringToFront();
-            ThreadStart threadStart = new ThreadStart(() => this.RunUnInstall());
-            Thread thread = new Thread(threadStart);
-            thread.Name = "uninstallingthread" + Installer.amountOfInstallers;
-            thread.Start();
-        }
-
-        public void Install()
-        {
-            // Initialize
-            progress = new LoadingForm
+            ThreadStart threadStart = new ThreadStart(() => this.RunUpdate());
+            Thread thread = new Thread(threadStart) 
             {
-                Visible = true,
-                Status = "Initializing",
-                Enabled = true,
-                Progress = 0,
-                MaxLength = 4,
-                StepLength = 1
+                Name = "updatethread" + Installer.amountOfInstallers
             };
-            progress.BringToFront();
-            ThreadStart threadStart = new ThreadStart(() => this.RunInstall());
-            Thread thread = new Thread(threadStart);
-            thread.Name = "installingthread" + Installer.amountOfInstallers;
             thread.Start();
         }
 
@@ -109,22 +135,28 @@ namespace ToolBox2.Apps
             MainWindow.self.Invalidate();
         }
 
-        private void RunUnInstall()
+        private void RunUnInstall(bool showProgress)
         {
             // Delete Files
-            this.progress.Invoke(new Action(() => this.BringProgressToFront()));
+            if (showProgress)
+                this.progress.Invoke(new Action(() => this.BringProgressToFront()));
             try
             {
-                this.progress.Invoke(new Action(() => this.SetStatus("Checking for uninstall.exe")));
+                if (showProgress)
+                    this.progress.Invoke(new Action(() => this.SetStatus("Checking for uninstall.exe")));
                 if (File.Exists(this.AppMainPath + @"\uninstall.exe"))
                     Process.Start(this.AppMainPath + @"\uninstall.exe");
-                this.progress.Invoke(new Action(() => this.Step()));
-                this.progress.Invoke(new Action(() => this.SetStatus("Deleting files")));
+                if (showProgress)
+                {
+                    this.progress.Invoke(new Action(() => this.Step()));
+                    this.progress.Invoke(new Action(() => this.SetStatus("Deleting files")));
+                }
                 if (Directory.Exists(this.AppMainPath))
                     Directory.Delete(this.AppMainPath, true);
                 if (this.App.HasConfig && Directory.Exists(this.App.ConfigFolderPath))
                     Directory.Delete(this.App.ConfigFolderPath);
-                this.progress.Invoke(new Action(() => this.Step()));
+                if (showProgress)
+                    this.progress.Invoke(new Action(() => this.Step()));
             }
             catch (UnauthorizedAccessException)
             {
@@ -133,15 +165,20 @@ namespace ToolBox2.Apps
             }
 
             // Finish up
-            this.progress.Invoke(new Action(() => this.SetStatus("Finishing")));
+            if (showProgress)
+                this.progress.Invoke(new Action(() => this.SetStatus("Finishing")));
             this.App.Installed = false;
-            this.progress.Invoke(new Action(() => this.Step()));
-            this.progress.Invoke(new Action(() => this.InstallComplete(InstallResult.UNINSTALLED, null)));
+            if (showProgress)
+            {
+                this.progress.Invoke(new Action(() => this.Step()));
+                this.progress.Invoke(new Action(() => this.InstallComplete(InstallResult.UNINSTALLED, null)));
+            }
         }
 
-        private void RunInstall()
+        private void RunInstall(bool showProgress)
         {
-            this.progress.Invoke(new Action(() => this.BringProgressToFront()));
+            if (showProgress)
+                this.progress.Invoke(new Action(() => this.BringProgressToFront()));
             try
             {
                 if (!Directory.Exists(this.MainPath))
@@ -161,39 +198,57 @@ namespace ToolBox2.Apps
             }
             catch (UnauthorizedAccessException)
             {
-                this.progress.Invoke(new Action(() => this.SetProgressVisible(false)));
+                if (showProgress)
+                    this.progress.Invoke(new Action(() => this.SetProgressVisible(false)));
                 Util.Utilities.RestartWithAdmin();
                 return;
             }
-            this.progress.Invoke(new Action(() => this.Step()));
+            if (showProgress)
+                this.progress.Invoke(new Action(() => this.Step()));
 
             // Download
-            this.progress.Invoke(new Action(() => this.SetStatus("Downloading")));
+            if (showProgress)
+                this.progress.Invoke(new Action(() => this.SetStatus("Downloading")));
             string tempZipPath = this.TempPath + @"\file" + Installer.amountOfInstallers + ".zip";
             if (!Directory.Exists(this.TempPath))
                 Directory.CreateDirectory(this.TempPath);
             WebClient webClient = new WebClient();
             webClient.DownloadFile(this.App.OnlineFilePath, tempZipPath);
-            this.progress.Invoke(new Action(() => this.Step()));
+            if (showProgress)
+                this.progress.Invoke(new Action(() => this.Step()));
 
             // Extract
-            this.progress.Invoke(new Action(() => this.SetStatus("Extracting")));
+            if (showProgress)
+                this.progress.Invoke(new Action(() => this.SetStatus("Extracting")));
             if (Directory.Exists(this.AppMainPath))
                 Directory.Delete(this.AppMainPath, true);
             Directory.CreateDirectory(this.AppMainPath);
             ZipFile.ExtractToDirectory(tempZipPath, this.AppMainPath);
-            this.progress.Invoke(new Action(() => this.Step()));
+            if (showProgress)
+                this.progress.Invoke(new Action(() => this.Step()));
 
             // Finish up
-            this.progress.Invoke(new Action(() => this.SetStatus("Finishing")));
+            if (showProgress)
+                this.progress.Invoke(new Action(() => this.SetStatus("Finishing")));
             Directory.Delete(this.TempPath, true);
             if (File.Exists(this.AppMainPath + "install.exe"))
             {
                 Process.Start(this.AppMainPath + "install.exe");
             }
             this.App.Installed = true;
+            if (showProgress)
+            {
+                this.progress.Invoke(new Action(() => this.Step()));
+                this.progress.Invoke(new Action(() => this.InstallComplete(InstallResult.INSTALLED, null)));
+            }
+        }
+
+        private void RunUpdate()
+        {
+            // Delete previous App
+            this.progress.Invoke(new Action(() => this.SetStatus("Uninstalling " + this.App.Name + " " + Util.Utilities.ToVersionString(this.App.Version))));
+            new Installer(this.App).UnInstall(false);
             this.progress.Invoke(new Action(() => this.Step()));
-            this.progress.Invoke(new Action(() => this.InstallComplete(InstallResult.INSTALLED, null)));
         }
 
         public void Close()
@@ -227,6 +282,7 @@ namespace ToolBox2.Apps
     {
         INSTALLED,
         UNINSTALLED,
+        UPDATE,
         FAILED
     }
 }

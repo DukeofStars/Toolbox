@@ -70,5 +70,17 @@ namespace ToolBox2.Util
             }
             return;
         }
+        public static string ToVersionString(int version)
+        {
+            string versionStr = Convert.ToString(version);
+            string returnStr = "";
+            if (versionStr.Length != 6)
+                return "failed";
+            for (int i = 0; i < 6; i++)
+            {
+                returnStr += i % 2 == 0 ? versionStr[i] + '.' : versionStr[i];
+            }
+            return returnStr;
+        }
     }
 }
