@@ -3,12 +3,11 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Threading.Tasks;
 
-using ToolBox2.Pages.InstalledPage;
-using ToolBox2.Pages.UnInstalledPage;
-using ToolBox2.Util;
-using Toolbox2.Update;
+using ToolBox.Pages.InstalledPage;
+using ToolBox.Pages.UnInstalledPage;
+using Toolbox.Update;
 
-namespace ToolBox2.Main
+namespace ToolBox.Main
 {
     public partial class MainWindow : Form
     {
@@ -24,21 +23,30 @@ namespace ToolBox2.Main
 
         public MainWindow Initialize()
         {
-            Console.WriteLine("ToolBox 2.0 started at {0:dd/MM/yyyy H:mm:ss}", DateTime.Now);
-            Data.InitializeData();
-            Util.Utilities.RoundBorderForm(this);
+            Console.WriteLine("ToolBox started at {0:dd/MM/yyyy H:mm:ss}", DateTime.Now);
+
+            Task.Run(() =>
+            {
+                InstalledPanel.Apps = Data.FetchInstalled();
+                Data.AllApps = Data.FetchAll();
+            });
+            Updater updater = new Updater();
+            Task.Run(() => updater.UpdateAll());
+
+            Utilities.Utilities.RoundBorderForm(this);
+
             this.MouseDown += this.Draggable;
             this.menupanel.MouseDown += this.Draggable;
-            
+
             this.exitBTN.BringToFront();
-            
+
             this.InitButtons();
             this.InitPages();
             this.ClearPage();
-            
+
             Header.SetPage(Page.NULL);
             Header.SetPage(Page.INSTALLED);
-            
+
             this.Invalidate();
             this.Visible = true;
             return this;
@@ -60,6 +68,7 @@ namespace ToolBox2.Main
             btn_installed.FlatAppearance.BorderSize = 0;
             btn_installed.Location = new Point(x, y += 30);
             btn_installed.MouseClick += this.menupanel_InstalledBtn_Click;
+            btn_installed.Cursor = Cursors.Hand;
 
             var btn_uninstalled = new Button();
             btn_uninstalled.Parent = this.menupanel;
@@ -70,6 +79,7 @@ namespace ToolBox2.Main
             btn_uninstalled.FlatAppearance.BorderSize = 0;
             btn_uninstalled.Location = new Point(x, y += 30);
             btn_uninstalled.MouseClick += this.menupanel_UnInstalledBtn_Click;
+            btn_uninstalled.Cursor = Cursors.Hand;
 
             this.menuButtons.Add(btn_installed);
             this.menuButtons.Add(btn_uninstalled);
@@ -212,6 +222,16 @@ namespace ToolBox2.Main
                 Header.appDescPanel.Enabled = false;
                 Header.appDescPanel.Dispose();
             }
+        }
+
+        private void exitBTN_MouseEnter(object sender, EventArgs e)
+        {
+            exitBTN.BackColor = Color.Red;
+        }
+
+        private void exitBTN_MouseLeave(object sender, EventArgs e)
+        {
+            exitBTN.BackColor = Header.darkish;
         }
     }
 }

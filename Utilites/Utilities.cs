@@ -4,9 +4,9 @@ using System.Drawing.Drawing2D;
 using System.Diagnostics;
 using System;
 
-using ToolBox2.Main;
+using ToolBox.Main;
 
-namespace ToolBox2.Util
+namespace ToolBox.Utilities
 {
     class Utilities
     {

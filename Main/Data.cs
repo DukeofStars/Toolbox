@@ -1,19 +1,18 @@
-﻿using ToolBox2.Apps;
-using System.Xml.Serialization;
+﻿using System.Xml.Serialization;
 using System.Collections.Generic;
 using System.IO;
 using System;
 using System.Net;
 
-using ToolBox2.Utilites;
+using ToolBox.Apps;
 
-namespace ToolBox2.Main
+namespace ToolBox.Main
 {
     class Data
     {
         private static string FolderPath = Path.Combine(Environment.GetFolderPath(
-            Environment.SpecialFolder.ApplicationData), "StarSoft", "Toolbox");
-        private static string FilePath = Path.Combine(FileManager.GetDirectory(FolderPath), "Toolbox.config");
+            Environment.SpecialFolder.ApplicationData), "TsunamiSoftware", "Toolbox");
+        private static string FilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TsunamiSoftware", "Toolbox.config");
         
         private static Dictionary<string, App> Apps = new Dictionary<string, App>();
 

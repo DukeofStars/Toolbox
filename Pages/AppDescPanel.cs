@@ -2,9 +2,9 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-using ToolBox2.Main;
+using ToolBox.Main;
 
-namespace ToolBox2.Pages
+namespace ToolBox.Pages
 {
     public partial class AppDescPanel : UserControl
     {

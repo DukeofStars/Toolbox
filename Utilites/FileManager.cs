@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace ToolBox2.Utilites
+namespace ToolBox.Utilities
 {
     internal class FileManager
     {

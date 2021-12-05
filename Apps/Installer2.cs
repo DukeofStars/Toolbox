@@ -3,10 +3,9 @@ using System.IO;
 using System.Diagnostics;
 using System;
 
-using ToolBox2.Utilites;
-using ToolBox2.Util;
+using ToolBox.Utilities;
 
-namespace ToolBox2.Apps
+namespace ToolBox.Apps
 {
     internal class Installer2
     {
@@ -15,12 +14,12 @@ namespace ToolBox2.Apps
             try
             {
                 Download(app);
-                Run(app);
+                Run();
                 CleanUp();
             }
             catch (UnauthorizedAccessException)
             {
-                Utilities.RestartWithAdmin();
+                Utilities.Utilities.RestartWithAdmin();
             }
         }
 
@@ -31,7 +30,7 @@ namespace ToolBox2.Apps
             return;
         }
 
-        static void Run(App app)
+        static void Run()
         {
             Process.Start(Path.Combine(FileManager.GetDirectory(Installer.TempPath), "installer.exe"));
             return;

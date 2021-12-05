@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Drawing;
 
-using ToolBox2.Apps;
-using ToolBox2.Main;
-using ToolBox2.Pages.InstalledPage;
+using ToolBox.Apps;
+using ToolBox.Main;
+using ToolBox.Pages.InstalledPage;
 
-namespace ToolBox2.Pages.UnInstalledPage
+namespace ToolBox.Pages.UnInstalledPage
 {
     public class UnInstalledPanel : Panel
     {
@@ -52,7 +52,7 @@ namespace ToolBox2.Pages.UnInstalledPage
                     appButton.Enabled = true;
                     appButton.Location = new Point(x, y);
                     appButton.Parent = this;
-                    Util.Utilities.RoundBorderControl(appButton);
+                    Utilities.Utilities.RoundBorderControl(appButton);
                     appButton.BringToFront();
                     appButtons.Add(appButton);
                 }

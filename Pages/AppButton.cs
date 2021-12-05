@@ -5,11 +5,10 @@ using System.IO;
 using System.Diagnostics;
 using System.Collections.Generic;
 
-using ToolBox2.Apps;
-using ToolBox2.Main;
-using ToolBox2.Apps;
+using ToolBox.Apps;
+using ToolBox.Main;
 
-namespace ToolBox2.Pages
+namespace ToolBox.Pages
 {
     public partial class AppButton : UserControl
     {
@@ -55,7 +54,7 @@ namespace ToolBox2.Pages
             if (app.Installed)
             {
                 string exePath = "";
-                string folderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "StarSoft", this.app.Name) + "\\";
+                string folderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "TsunamiSoftware", this.app.Name) + "\\";
                 try
                 {
                     exePath = folderPath + this.app.Name + ".exe";

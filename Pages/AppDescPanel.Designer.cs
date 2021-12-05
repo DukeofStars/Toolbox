@@ -1,5 +1,4 @@
-﻿
-namespace ToolBox2.Pages
+﻿namespace ToolBox.Pages
 {
     partial class AppDescPanel
     {

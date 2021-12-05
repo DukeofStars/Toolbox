@@ -1,16 +1,16 @@
 ﻿using System.Windows.Forms;
 using System;
 
-using ToolBox2.Util;
+using ToolBox.Utilities;
 
-namespace ToolBox2.Main
+namespace ToolBox.Main
 {
     public partial class LoadingForm : Form
     {
         public LoadingForm()
         {
             InitializeComponent();
-            Utilities.RoundBorderForm(this);
+            Utilities.Utilities.RoundBorderForm(this);
         }
         public void Step() => this.progressBar.PerformStep();
         public string Status

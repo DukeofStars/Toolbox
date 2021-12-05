@@ -1,5 +1,4 @@
-﻿
-namespace ToolBox2.Main
+﻿namespace ToolBox.Main
 {
     partial class LoadingForm
     {

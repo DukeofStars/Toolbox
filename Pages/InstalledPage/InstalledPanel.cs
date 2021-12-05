@@ -3,10 +3,10 @@ using System.Drawing;
 using System.Collections.Generic;
 using System.Windows.Forms;
 
-using ToolBox2.Main;
-using ToolBox2.Apps;
+using ToolBox.Main;
+using ToolBox.Apps;
 
-namespace ToolBox2.Pages.InstalledPage
+namespace ToolBox.Pages.InstalledPage
 {
     public class InstalledPanel : Panel
     {
@@ -36,7 +36,7 @@ namespace ToolBox2.Pages.InstalledPage
                     appButton.Enabled = true;
                     appButton.Location = new Point(x, y);
                     appButton.Parent = this;
-                    Util.Utilities.RoundBorderControl(appButton);
+                    Utilities.Utilities.RoundBorderControl(appButton);
                     appButton.BringToFront();
                     appButtons.Add(appButton);
                 }

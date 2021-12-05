@@ -8,10 +8,10 @@ using System.Security.Principal;
 using System.Windows.Forms;
 using System.Threading.Tasks;
 
-using ToolBox2.Main;
-using ToolBox2.Util;
+using ToolBox.Main;
+using ToolBox.Utilities;
 
-namespace ToolBox2.Apps
+namespace ToolBox.Apps
 {
     public class Installer
     {
@@ -55,117 +55,105 @@ namespace ToolBox2.Apps
         {
             MainPath = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
-                "StarSoft");
+                "TsunamiSoftware");
             TempPath = Path.Combine(MainPath, "temp");
         }
 
         public void UnInstall(bool showProgress = true)
         {
-            // Delete Files
-            if (showProgress)
-                progress.Invoke(new Action(() => BringProgressToFront()));
             try
             {
+                // Delete Files
                 if (showProgress)
-                    progress.Invoke(new Action(() => SetStatus("Checking for uninstall.exe")));
-                if (File.Exists(this.AppMainPath + @"\uninstall.exe"))
-                    Process.Start(this.AppMainPath + @"\uninstall.exe");
+                    progress.Invoke(new Action(() => BringProgressToFront()));
+                    if (showProgress)
+                        progress.Invoke(new Action(() => SetStatus("Checking for uninstall.exe")));
+                    if (File.Exists(this.AppMainPath + @"\uninstall.exe"))
+                        Process.Start(this.AppMainPath + @"\uninstall.exe");
+                    if (showProgress)
+                    {
+                        progress.Invoke(new Action(() => Step()));
+                        progress.Invoke(new Action(() => SetStatus("Deleting files")));
+                    }
+                    if (Directory.Exists(this.AppMainPath))
+                        Directory.Delete(this.AppMainPath, true);
+                    if (this.App.HasConfig && Directory.Exists(this.App.ConfigFolderPath))
+                        Directory.Delete(this.App.ConfigFolderPath);
+                    if (showProgress)
+                        progress.Invoke(new Action(() => Step()));
+
+                // Finish up
+                if (showProgress)
+                    progress.Invoke(new Action(() => SetStatus("Finishing")));
+                this.App.Installed = false;
                 if (showProgress)
                 {
                     progress.Invoke(new Action(() => Step()));
-                    progress.Invoke(new Action(() => SetStatus("Deleting files")));
+                    progress.Invoke(new Action(() => InstallComplete(InstallResult.UNINSTALLED, null)));
                 }
-                if (Directory.Exists(this.AppMainPath))
-                    Directory.Delete(this.AppMainPath, true);
-                if (this.App.HasConfig && Directory.Exists(this.App.ConfigFolderPath))
-                    Directory.Delete(this.App.ConfigFolderPath);
-                if (showProgress)
-                    progress.Invoke(new Action(() => Step()));
             }
             catch (UnauthorizedAccessException)
             {
                 if (showProgress)
                     progress.Invoke(new Action(() => progress.Close()));
-                Utilities.RestartWithAdmin();
+                Utilities.Utilities.RestartWithAdmin();
                 return;
-            }
-
-            // Finish up
-            if (showProgress)
-                progress.Invoke(new Action(() => SetStatus("Finishing")));
-            this.App.Installed = false;
-            if (showProgress)
-            {
-                progress.Invoke(new Action(() => Step()));
-                progress.Invoke(new Action(() => InstallComplete(InstallResult.UNINSTALLED, null)));
             }
         }
 
         public void Install(bool showProgress = true)
         {
-            if (showProgress)
-                progress.Invoke(new Action(() => BringProgressToFront()));
             try
             {
-                if (!Directory.Exists(MainPath))
-                    Directory.CreateDirectory(MainPath);
-                DirectoryInfo info = new DirectoryInfo(MainPath);
-                DirectorySecurity security = info.GetAccessControl();
-                WindowsIdentity currentUserIdentity = WindowsIdentity.GetCurrent();
-                FileSystemAccessRule fileSystemRule = new FileSystemAccessRule(
-                    currentUserIdentity.Name,
-                    FileSystemRights.Write,
-                    InheritanceFlags.ObjectInherit |
-                    InheritanceFlags.ContainerInherit,
-                    PropagationFlags.None,
-                    AccessControlType.Allow);
-                security.AddAccessRule(fileSystemRule);
-                info.SetAccessControl(security);
+                if (showProgress)
+                    progress.Invoke(new Action(() => BringProgressToFront()));
+                    if (!Directory.Exists(MainPath))
+                        Directory.CreateDirectory(MainPath);
+                if (showProgress)
+                    progress.Invoke(new Action(() => Step()));
+
+                // Download
+                if (showProgress)
+                    progress.Invoke(new Action(() => SetStatus("Downloading")));
+                string tempZipPath = TempPath + @"\file" + Installer.amountOfInstallers + ".zip";
+                if (!Directory.Exists(TempPath))
+                    Directory.CreateDirectory(TempPath);
+                WebClient webClient = new WebClient();
+                webClient.DownloadFile(this.App.OnlineFilePath, tempZipPath);
+                if (showProgress)
+                    progress.Invoke(new Action(() => Step()));
+
+                // Extract
+                if (showProgress)
+                    progress.Invoke(new Action(() => SetStatus("Extracting")));
+                if (Directory.Exists(this.AppMainPath))
+                    Directory.Delete(this.AppMainPath, true);
+                Directory.CreateDirectory(this.AppMainPath);
+                ZipFile.ExtractToDirectory(tempZipPath, this.AppMainPath);
+                if (showProgress)
+                    progress.Invoke(new Action(() => Step()));
+
+                // Finish up
+                if (showProgress)
+                    progress.Invoke(new Action(() => SetStatus("Finishing")));
+                Directory.Delete(TempPath, true);
+                if (File.Exists(this.AppMainPath + "install.exe"))
+                {
+                    Process.Start(this.AppMainPath + "install.exe");
+                }
+                this.App.Installed = true;
+                if (showProgress)
+                {
+                    progress.Invoke(new Action(() => Step()));
+                    progress.Invoke(new Action(() => InstallComplete(InstallResult.INSTALLED, null)));
+                }
             }
             catch (UnauthorizedAccessException)
             {
                 if (showProgress)
                     progress.Invoke(new Action(() => SetProgressVisible(false)));
-                Util.Utilities.RestartWithAdmin();
+                Utilities.Utilities.RestartWithAdmin();
                 return;
-            }
-            if (showProgress)
-                progress.Invoke(new Action(() => Step()));
-
-            // Download
-            if (showProgress)
-                progress.Invoke(new Action(() => SetStatus("Downloading")));
-            string tempZipPath = TempPath + @"\file" + Installer.amountOfInstallers + ".zip";
-            if (!Directory.Exists(TempPath))
-                Directory.CreateDirectory(TempPath);
-            WebClient webClient = new WebClient();
-            webClient.DownloadFile(this.App.OnlineFilePath, tempZipPath);
-            if (showProgress)
-                progress.Invoke(new Action(() => Step()));
-
-            // Extract
-            if (showProgress)
-                progress.Invoke(new Action(() => SetStatus("Extracting")));
-            if (Directory.Exists(this.AppMainPath))
-                Directory.Delete(this.AppMainPath, true);
-            Directory.CreateDirectory(this.AppMainPath);
-            ZipFile.ExtractToDirectory(tempZipPath, this.AppMainPath);
-            if (showProgress)
-                progress.Invoke(new Action(() => Step()));
-
-            // Finish up
-            if (showProgress)
-                progress.Invoke(new Action(() => SetStatus("Finishing")));
-            Directory.Delete(TempPath, true);
-            if (File.Exists(this.AppMainPath + "install.exe"))
-            {
-                Process.Start(this.AppMainPath + "install.exe");
-            }
-            this.App.Installed = true;
-            if (showProgress)
-            {
-                progress.Invoke(new Action(() => Step()));
-                progress.Invoke(new Action(() => InstallComplete(InstallResult.INSTALLED, null)));
             }
         }
 

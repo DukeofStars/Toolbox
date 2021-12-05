@@ -1,5 +1,4 @@
-﻿
-namespace ToolBox2.Main
+﻿namespace ToolBox.Main
 {
     partial class MainWindow
     {
@@ -57,6 +56,7 @@ namespace ToolBox2.Main
             // 
             this.exitBTN.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.exitBTN.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(60)))), ((int)(((byte)(60)))));
+            this.exitBTN.Cursor = System.Windows.Forms.Cursors.Arrow;
             this.exitBTN.FlatAppearance.BorderSize = 0;
             this.exitBTN.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.exitBTN.Location = new System.Drawing.Point(1140, 0);
@@ -66,6 +66,8 @@ namespace ToolBox2.Main
             this.exitBTN.Text = "X";
             this.exitBTN.UseVisualStyleBackColor = false;
             this.exitBTN.Click += new System.EventHandler(this.exitBTN_Click);
+            this.exitBTN.MouseEnter += new System.EventHandler(this.exitBTN_MouseEnter);
+            this.exitBTN.MouseLeave += new System.EventHandler(this.exitBTN_MouseLeave);
             // 
             // MainWindow
             // 

@@ -1,4 +1,4 @@
-﻿namespace Toolbox2.Update
+﻿namespace Toolbox.Update
 {
     public sealed class Version
     {

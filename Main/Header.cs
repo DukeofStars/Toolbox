@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 
-using ToolBox2.Pages.InstalledPage;
-using ToolBox2.Pages.UnInstalledPage;
-using ToolBox2.Pages;
+using ToolBox.Pages.InstalledPage;
+using ToolBox.Pages.UnInstalledPage;
+using ToolBox.Pages;
 
-namespace ToolBox2.Main
+namespace ToolBox.Main
 {
     public partial class MainWindow : Form
     {

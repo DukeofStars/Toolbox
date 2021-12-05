@@ -1,5 +1,5 @@
 ﻿
-namespace ToolBox2.Pages
+namespace ToolBox.Pages
 {
     partial class AppButton
     {
@@ -48,9 +48,10 @@ namespace ToolBox2.Pages
             // btn_install
             // 
             this.btn_install.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.btn_install.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btn_install.FlatAppearance.BorderSize = 0;
             this.btn_install.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btn_install.Image = global::ToolBox2.Properties.Resources.install_icon_20x20_;
+            this.btn_install.Image = global::ToolBox.Properties.Resources.install_icon_20x20_;
             this.btn_install.Location = new System.Drawing.Point(0, 80);
             this.btn_install.Name = "btn_install";
             this.btn_install.Size = new System.Drawing.Size(25, 25);

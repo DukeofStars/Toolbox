@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-using ToolBox2.Pages.InstalledPage;
+using ToolBox.Pages.InstalledPage;
 
-namespace Toolbox2.Update
+namespace Toolbox.Update
 {
     public class Updater
     {

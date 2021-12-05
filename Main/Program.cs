@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace ToolBox2.Main
+namespace ToolBox.Main
 {
     static class Program
     {

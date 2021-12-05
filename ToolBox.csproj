@@ -33,7 +33,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>ToolBox2.Main.Program</StartupObject>
+    <StartupObject>ToolBox.Main.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -70,12 +70,6 @@
       <DependentUpon>MainWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="Main\Program.cs" />
-    <Compile Include="Main\TransparentPanel.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Main\TransparentPanel.Designer.cs">
-      <DependentUpon>TransparentPanel.cs</DependentUpon>
-    </Compile>
     <Compile Include="Pages\AppButton.cs">
       <SubType>UserControl</SubType>
     </Compile>

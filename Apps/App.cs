@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace ToolBox2.Apps
+namespace ToolBox.Apps
 {
     public class App
     {
@@ -9,7 +9,7 @@ namespace ToolBox2.Apps
         public string OnlineFilePath { get; set; }
         public string ConfigFolderPath { get; set; }
         public string ConfigFilePath { get; set; }
-        public Toolbox2.Update.Version Version { get; set; }
+        public Toolbox.Update.Version Version { get; set; }
         public bool Installed { get; set; }
         public bool HasConfig { get; set; }
         public bool OutDated { get; set; }
@@ -18,7 +18,7 @@ namespace ToolBox2.Apps
         {
             string infoPath = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
-                "StarSoft", this.Name, "info.txt");
+                "TsunamiSoftware", this.Name, "info.txt");
             if (File.Exists(infoPath))
             {
                 return File.ReadAllText(infoPath);
