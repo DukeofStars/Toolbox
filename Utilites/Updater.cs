@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 
 using ToolBox.Pages.InstalledPage;
+using ToolBox.Main;
+using System;
 
 namespace Toolbox.Update
 {
@@ -18,7 +20,16 @@ namespace Toolbox.Update
 
         void FetchLatest()
         {
-
+            appLatestVersions = new Dictionary<int, Version>();
+            foreach (var app in MainWindow.self.UnInstalledPage.GetUninstalledApps())
+            {
+                if (!appCodes.TryGetValue(app.Name, out int appCode))
+                {
+                    appCodes.Add(app.Name, lastCode++);
+                    appCode = lastCode;
+                }
+                appLatestVersions.Add(appCode, app.Version);
+            }
         }
 
         void FetchLocal()
@@ -37,8 +48,21 @@ namespace Toolbox.Update
 
         public void UpdateAll()
         {
+            MainWindow.self.InitComplete += UpdateImpl;
+        }
+
+        void UpdateImpl(object sender, EventArgs e)
+        {
             FetchLocal();
             FetchLatest();
+
+            foreach (var localVersion in appLocalVersions)
+            {
+                if (appLatestVersions.TryGetValue(localVersion.Key, out Version version))
+                {
+                    if (version > localVersion.Value) System.Console.WriteLine("Update availible for " + localVersion.Key);
+                }
+            }
         }
     }
 }

@@ -56,7 +56,7 @@ namespace ToolBox.Apps
             MainPath = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
                 "TsunamiSoftware");
-            TempPath = Path.Combine(MainPath, "temp");
+            TempPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TsunamiSoftware", "temp\\");
         }
 
         public void UnInstall(bool showProgress = true)

@@ -11,8 +11,8 @@ namespace ToolBox.Main
     class Data
     {
         private static string FolderPath = Path.Combine(Environment.GetFolderPath(
-            Environment.SpecialFolder.ApplicationData), "TsunamiSoftware", "Toolbox");
-        private static string FilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TsunamiSoftware", "Toolbox.config");
+            Environment.SpecialFolder.ApplicationData), "TsunamiSoftware");
+        private static string FilePath = Path.Combine(FolderPath, "Toolbox.config");
         
         private static Dictionary<string, App> Apps = new Dictionary<string, App>();
 
@@ -23,11 +23,19 @@ namespace ToolBox.Main
             List<App> installed;
             XmlSerializer xmlSerializer = new XmlSerializer(typeof(List<App>));
             if (!File.Exists(FilePath))
-                File.Create(FilePath);
-            using (var stream = File.OpenRead(Data.FilePath))
+                return new List<App>();
+            using (var stream = File.OpenRead(FilePath))
             {
                 installed = (List<App>)xmlSerializer.Deserialize(stream);
             }
+
+            Console.WriteLine("Config file contains:\n" + File.ReadAllText(FilePath));
+
+            foreach (App app in installed)
+            {
+                Console.WriteLine(app.Name);
+            }
+
             return installed;
         }
 
@@ -41,6 +49,7 @@ namespace ToolBox.Main
             {
                 all = (List<App>)xmlSerializer.Deserialize(stream);
             }
+
             return all;
         }
 
@@ -58,15 +67,13 @@ namespace ToolBox.Main
         public static void Save()
         {
             XmlSerializer serializer = new XmlSerializer(new List<App>().GetType());
-            if (!Directory.Exists(Data.FolderPath))
-                Directory.CreateDirectory(Data.FolderPath);
-            if (File.Exists(Data.FilePath))
-                File.Delete(Data.FilePath);
+            if (File.Exists(FilePath))
+                File.Delete(FilePath);
             List<App> apps = new List<App>();
-            foreach (App app in Data.Apps.Values)
+            foreach (App app in Apps.Values)
                 if (app.Installed) 
                     apps.Add(app);
-            using (var stream = File.OpenWrite(Data.FilePath))
+            using (var stream = File.OpenWrite(FilePath))
                 serializer.Serialize(stream, apps);
         }
     }

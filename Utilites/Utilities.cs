@@ -3,6 +3,7 @@ using System.Windows.Forms;
 using System.Drawing.Drawing2D;
 using System.Diagnostics;
 using System;
+using System.Collections.Generic;
 
 using ToolBox.Main;
 
@@ -81,6 +82,15 @@ namespace ToolBox.Utilities
                 returnStr += i % 2 == 0 ? versionStr[i] + '.' : versionStr[i];
             }
             return returnStr;
+        }
+
+        public static List<T> AppendList<T>(List<T> origin, List<T> appender)
+        {
+            if (appender == null)
+                return origin;
+            foreach (T item in appender)
+                origin.Add(item);
+            return origin;
         }
     }
 }

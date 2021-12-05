@@ -32,17 +32,20 @@ namespace ToolBox.Pages.UnInstalledPage
 
         public new void Refresh()
         {
+            // Clear previous
             foreach (AppButton appButton in this.appButtons)
             {
                 appButton.Visible = false;
                 appButton.Enabled = false;
                 appButton.Dispose();
             }
+
+            // Load apps
             this.apps = new List<App>();
             this.appButtons = new List<AppButton>();
             foreach (App app in InstalledPanel.Apps)
             {
-                if (!app.Installed && !this.HasPair(app))
+                if (!app.Installed /*&& !this.HasPair(app)*/)
                 {
                     this.apps.Add(app);
                     AppButton appButton = new AppButton(app);
@@ -57,6 +60,13 @@ namespace ToolBox.Pages.UnInstalledPage
                     appButtons.Add(appButton);
                 }
             }
+            Update();
+            base.Refresh();
+        }
+
+        public List<App> GetUninstalledApps()
+        {
+            return apps;
         }
 
         private List<App> ignored = new List<App>();

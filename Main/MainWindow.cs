@@ -6,11 +6,15 @@ using System.Threading.Tasks;
 using ToolBox.Pages.InstalledPage;
 using ToolBox.Pages.UnInstalledPage;
 using Toolbox.Update;
+using ToolBox.Apps;
 
 namespace ToolBox.Main
 {
     public partial class MainWindow : Form
     {
+
+        public event EventHandler InitComplete;
+
         // Main
         public MainWindow()
         {
@@ -27,9 +31,11 @@ namespace ToolBox.Main
 
             Task.Run(() =>
             {
-                InstalledPanel.Apps = Data.FetchInstalled();
-                Data.AllApps = Data.FetchAll();
+                InstalledPanel.Apps = Utilities.Utilities.AppendList(Data.FetchInstalled(), Data.FetchAll());
+                Data.AllApps = InstalledPage.GetInstalledApps();
+                Console.WriteLine("Loaded Apps");
             });
+
             Updater updater = new Updater();
             Task.Run(() => updater.UpdateAll());
 
@@ -49,6 +55,9 @@ namespace ToolBox.Main
 
             this.Invalidate();
             this.Visible = true;
+
+            InitComplete(this, null);
+
             return this;
         }
 
@@ -158,15 +167,17 @@ namespace ToolBox.Main
         public void PageInstalled()
         {
             Header.SetPage(Page.INSTALLED);
-            this.InstalledPage.Visible = true;
-            this.InstalledPage.Enabled = true;
+            InstalledPage.Visible = true;
+            InstalledPage.Enabled = true;
+            InstalledPage.Refresh();
         }
 
         public void PageUnInstalled()
         {
             Header.SetPage(Page.UNINSTALLED);
-            this.UnInstalledPage.Visible = true;
-            this.UnInstalledPage.Enabled = true;
+            UnInstalledPage.Visible = true;
+            UnInstalledPage.Enabled = true;
+            UnInstalledPage.Refresh();
         }
 
         // Rendering

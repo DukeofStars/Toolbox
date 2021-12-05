@@ -37,15 +37,15 @@ namespace ToolBox.Pages
             if (!this.app.Installed)
             {
                 Installer2.Install(this.app);
-                
             }
             else
             {
-                Installer.UnInstall(this.app);
-                MainWindow.InstalledPanel.Refresh();
-                MainWindow.UnInstalledPanel.Refresh();
-                Header.SetPage(Page.INSTALLED);
-                MainWindow.self.Invalidate();
+                Installer2.Uninstall(this.app);
+                //Installer.UnInstall(this.app);
+                //MainWindow.InstalledPanel.Refresh();
+                //MainWindow.UnInstalledPanel.Refresh();
+                //Header.SetPage(Page.INSTALLED);
+                //MainWindow.self.Invalidate();
             }
         }
 

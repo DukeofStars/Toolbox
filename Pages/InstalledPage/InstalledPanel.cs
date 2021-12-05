@@ -15,15 +15,19 @@ namespace ToolBox.Pages.InstalledPage
 
         public new void Refresh()
         {
+
+            // Clear previous
             foreach (AppButton appButton in this.appButtons)
             {
                 appButton.Visible = false;
                 appButton.Enabled = false;
                 appButton.Dispose();
             }
+
+            // Load
             this.apps = new List<App>();
             this.appButtons = new List<AppButton>();
-            foreach (App app in InstalledPanel.Apps)
+            foreach (App app in Apps)
             {
                 if (app.Installed)
                 {
@@ -41,6 +45,8 @@ namespace ToolBox.Pages.InstalledPage
                     appButtons.Add(appButton);
                 }
             }
+            Update();
+            base.Refresh();
         }
 
         public (bool, App) CheckForUpdates(App app)

@@ -12,7 +12,6 @@ namespace ToolBox.Apps
         public Toolbox.Update.Version Version { get; set; }
         public bool Installed { get; set; }
         public bool HasConfig { get; set; }
-        public bool OutDated { get; set; }
 
         public string GetDescription()
         {
