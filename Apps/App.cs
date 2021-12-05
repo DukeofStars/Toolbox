@@ -9,7 +9,7 @@ namespace ToolBox2.Apps
         public string OnlineFilePath { get; set; }
         public string ConfigFolderPath { get; set; }
         public string ConfigFilePath { get; set; }
-        public int Version { get; set; } = 0;
+        public Toolbox2.Update.Version Version { get; set; }
         public bool Installed { get; set; }
         public bool HasConfig { get; set; }
         public bool OutDated { get; set; }

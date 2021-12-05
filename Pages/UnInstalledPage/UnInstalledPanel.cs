@@ -46,7 +46,7 @@ namespace ToolBox2.Pages.UnInstalledPage
                 {
                     this.apps.Add(app);
                     AppButton appButton = new AppButton(app);
-                    int x = (appButtons.Count % 3) * 200 + 50;
+                    int x = (appButtons.Count % 3) * 200 + 100;
                     int y = (int)Math.Floor((double)appButtons.Count / 3) * 200 + 100;
                     appButton.Visible = true;
                     appButton.Enabled = true;

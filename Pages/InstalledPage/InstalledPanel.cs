@@ -28,6 +28,7 @@ namespace ToolBox2.Pages.InstalledPage
                 if (app.Installed)
                 {
                     this.apps.Add(app);
+
                     AppButton appButton = new AppButton(app);
                     int x = (appButtons.Count % 4) * 200 + 100;
                     int y = (int)Math.Floor((double)appButtons.Count / 4) * 200 + 100;
@@ -38,20 +39,18 @@ namespace ToolBox2.Pages.InstalledPage
                     Util.Utilities.RoundBorderControl(appButton);
                     appButton.BringToFront();
                     appButtons.Add(appButton);
-                    if (this.CheckForUpdates(app))
-                        MessageBox.Show("Update Availible for " + app.Name);
                 }
             }
         }
 
-        private bool CheckForUpdates(App app)
+        public (bool, App) CheckForUpdates(App app)
         {
             foreach (App comp_app in InstalledPanel.Apps)
             {
                 if (app.Name == comp_app.Name && app.Version < comp_app.Version)
-                    return true;
+                    return (true, comp_app);
             }
-            return false;
+            return (false, null);
         }
 
         public List<App> GetInstalledApps()

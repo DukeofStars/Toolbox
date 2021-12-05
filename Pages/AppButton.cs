@@ -3,32 +3,41 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.IO;
 using System.Diagnostics;
+using System.Collections.Generic;
 
 using ToolBox2.Apps;
 using ToolBox2.Main;
+using ToolBox2.Apps;
 
 namespace ToolBox2.Pages
 {
     public partial class AppButton : UserControl
     {
+        private static List<AppButton> appButtons = new List<AppButton>();
         private App app;
         public AppButton(App app)
         {
             InitializeComponent();
             this.app = app;
             this.Name = this.app.Name;
+            Refresh();
+            this.btn_install.Click += this.Install;
+            AppButton.appButtons.Add(this);
+        }
+
+        private new void Refresh()
+        {
             if (app.Installed)
             {
                 this.btn_install.Image = Image.FromFile(@"icons\uninstall-delete.png");
             }
-            this.btn_install.Click += this.Install;
         }
 
         private void Install(object sender, EventArgs e)
         {
             if (!this.app.Installed)
             {
-                Installer.Install(this.app);
+                Installer2.Install(this.app);
                 
             }
             else

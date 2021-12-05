@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Threading.Tasks;
 
 using ToolBox2.Pages.InstalledPage;
 using ToolBox2.Pages.UnInstalledPage;
 using ToolBox2.Util;
-using ToolBox2.Pages;
+using Toolbox2.Update;
 
 namespace ToolBox2.Main
 {
@@ -14,8 +15,8 @@ namespace ToolBox2.Main
         // Main
         public MainWindow()
         {
-            MainWindow.self = this;
-            this.Visible = false;
+            self = this;
+            Visible = false;
             InitializeComponent();
         }
         
@@ -23,18 +24,32 @@ namespace ToolBox2.Main
 
         public MainWindow Initialize()
         {
-            Console.WriteLine("ToolBox 2.0 started at {0:dd/MM/yyyy H:mm:ss}", DateTime.Now);
-            Data.InitializeData();
+            Console.WriteLine("ToolBox started at {0:dd/MM/yyyy H:mm:ss}", DateTime.Now);
+
+            Task.Run(() =>
+            {
+                InstalledPanel.Apps = Data.FetchInstalled();
+                Data.AllApps = Data.FetchAll();
+            });
+            Updater updater = new Updater();
+            Task.Run(() => updater.UpdateAll());
+            
             Utilities.RoundBorderForm(this);
+            
             this.MouseDown += this.Draggable;
             this.menupanel.MouseDown += this.Draggable;
+            
             this.exitBTN.BringToFront();
+            
             this.InitButtons();
             this.InitPages();
             this.ClearPage();
-            this.Visible = true;
+            
             Header.SetPage(Page.NULL);
             Header.SetPage(Page.INSTALLED);
+            
+            this.Invalidate();
+            this.Visible = true;
             return this;
         }
 
@@ -157,7 +172,6 @@ namespace ToolBox2.Main
 
         protected override void OnPaint(PaintEventArgs e)
         {
-            //MessageBox.Show("current page = " + Header.currentPage + ", prev page = " + Header.prevPage);
             if (Header.currentPage == Page.INSTALLED)
             {
                 if (Header.prevPage != Page.INSTALLED) 
