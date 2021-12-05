@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{4AF7210E-1B26-44EB-835D-CD9D3EB97A48}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>ToolBox2</RootNamespace>
-    <AssemblyName>ToolBox2.0</AssemblyName>
+    <RootNamespace>ToolBox</RootNamespace>
+    <AssemblyName>ToolBox</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

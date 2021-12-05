@@ -22,7 +22,7 @@ namespace ToolBox2.Main
 
         public MainWindow Initialize()
         {
-            Console.WriteLine("ToolBox 2.0 started at {0:dd/MM/yyyy H:mm:ss}", DateTime.Now);
+            Console.WriteLine("ToolBox started at {0:dd/MM/yyyy H:mm:ss}", DateTime.Now);
             Data.InitializeData();
             Util.Utilities.RoundBorderForm(this);
             this.MouseDown += this.Draggable;

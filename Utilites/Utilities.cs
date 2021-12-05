@@ -56,7 +56,7 @@ namespace ToolBox2.Util
         public static void RestartWithAdmin()
         {
             var result = MessageBox.Show(
-                    "Toolbox 2.0 requires higher permissions to perform this task",
+                    "Toolbox requires higher permissions to perform this task",
                     "Unauthorized Access Exception",
                     MessageBoxButtons.OKCancel);
             if (result == DialogResult.OK)
