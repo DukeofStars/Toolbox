@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Threading.Tasks;
 
 using ToolBox2.Pages.InstalledPage;
 using ToolBox2.Pages.UnInstalledPage;
 using ToolBox2.Util;
+using Toolbox2.Update;
 
 namespace ToolBox2.Main
 {
@@ -13,8 +15,8 @@ namespace ToolBox2.Main
         // Main
         public MainWindow()
         {
-            MainWindow.self = this;
-            this.Visible = false;
+            self = this;
+            Visible = false;
             InitializeComponent();
         }
         
@@ -22,15 +24,22 @@ namespace ToolBox2.Main
 
         public MainWindow Initialize()
         {
-            Console.WriteLine("ToolBox started at {0:dd/MM/yyyy H:mm:ss}", DateTime.Now);
+            Console.WriteLine("ToolBox 2.0 started at {0:dd/MM/yyyy H:mm:ss}", DateTime.Now);
             Data.InitializeData();
             Util.Utilities.RoundBorderForm(this);
             this.MouseDown += this.Draggable;
             this.menupanel.MouseDown += this.Draggable;
+            
             this.exitBTN.BringToFront();
+            
             this.InitButtons();
             this.InitPages();
             this.ClearPage();
+            
+            Header.SetPage(Page.NULL);
+            Header.SetPage(Page.INSTALLED);
+            
+            this.Invalidate();
             this.Visible = true;
             return this;
         }
@@ -68,18 +77,12 @@ namespace ToolBox2.Main
 
         public void InitPages()
         {
-            Color darkish = Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(60)))), ((int)(((byte)(60)))));
-            /*InstalledPanel.Apps.Add(new App
-            {
-                Name = "test",
-                Installed = true
-            });*/
             // InstalledPage
             this.InstalledPage = new InstalledPanel();
             this.InstalledPage.Parent = this;
             this.InstalledPage.Location = new Point(200, 0);
             this.InstalledPage.Size = new Size(960, 680);
-            this.InstalledPage.BackColor = darkish;
+            this.InstalledPage.BackColor = Header.darkish;
             this.InstalledPage.MouseDown += this.Draggable;
 
             // UnInstalled Page
@@ -87,43 +90,27 @@ namespace ToolBox2.Main
             this.UnInstalledPage.Parent = this;
             this.UnInstalledPage.Location = new Point(200, 0);
             this.UnInstalledPage.Size = new Size(960, 680);
-            this.UnInstalledPage.BackColor = darkish;
+            this.UnInstalledPage.BackColor = Header.darkish;
             this.UnInstalledPage.Visible = false;
             this.UnInstalledPage.Enabled = false;
             this.UnInstalledPage.MouseDown += this.Draggable;
 
-            this.InstalledPage.Initialize();
+            this.InstalledPage.Refresh();
+            this.UnInstalledPage.Refresh();
         }
 
         // Managing
 
-        public void ClearPage()
-        {
-            this.line_panel.Visible = false;
-            this.line_panel.Enabled = false;
-            this.InstalledPage.Visible = false;
-            this.UnInstalledPage.Visible = false;
-
-            this.InstalledPage.Enabled = false;
-            this.UnInstalledPage.Enabled = false;
-        }
-
         public void menupanel_InstalledBtn_Click(object sender, MouseEventArgs e)
         {
-            if (Header.currentPage != Page.INSTALLED)
-            {
-                Header.SetPage(Page.INSTALLED);
-                this.Invalidate();
-            }
+            Header.SetPage(Page.INSTALLED);
+            this.Invalidate();
         }
 
         public void menupanel_UnInstalledBtn_Click(object sender, MouseEventArgs e)
         {
-            if (Header.currentPage != Page.UNINSTALLED)
-            {
-                Header.SetPage(Page.UNINSTALLED);
-                this.Invalidate();
-            }
+            Header.SetPage(Page.UNINSTALLED);
+            this.Invalidate();
         }
 
         public void Save(object sender, FormClosingEventArgs e)
@@ -198,10 +185,32 @@ namespace ToolBox2.Main
                     this.PageUnInstalled();
                 }
             }
+            else if (Header.currentPage == Page.APPDESC)
+            {
+                this.line_panel.Visible = false;
+            }
             else
             {
                 this.ClearPage();
                 this.line_panel.Visible = false;
+            }
+        }
+
+        public void ClearPage()
+        {
+            this.line_panel.Visible = false;
+            this.line_panel.Enabled = false;
+            this.InstalledPage.Visible = false;
+            this.UnInstalledPage.Visible = false;
+
+            this.InstalledPage.Enabled = false;
+            this.UnInstalledPage.Enabled = false;
+
+            if (Header.prevPage == Page.APPDESC)
+            {
+                Header.appDescPanel.Visible = false;
+                Header.appDescPanel.Enabled = false;
+                Header.appDescPanel.Dispose();
             }
         }
     }

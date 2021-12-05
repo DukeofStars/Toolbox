@@ -1,11 +1,11 @@
 ﻿using ToolBox2.Apps;
-using ToolBox2.Pages.InstalledPage;
 using System.Xml.Serialization;
 using System.Collections.Generic;
 using System.IO;
 using System;
 using System.Net;
-using System.Windows.Forms;
+
+using ToolBox2.Utilites;
 
 namespace ToolBox2.Main
 {
@@ -13,55 +13,36 @@ namespace ToolBox2.Main
     {
         private static string FolderPath = Path.Combine(Environment.GetFolderPath(
             Environment.SpecialFolder.ApplicationData), "StarSoft", "Toolbox");
-        private static string FilePath = Path.Combine(FolderPath, "Toolbox.config");
+        private static string FilePath = Path.Combine(FileManager.GetDirectory(FolderPath), "Toolbox.config");
+        
         private static Dictionary<string, App> Apps = new Dictionary<string, App>();
-        private static Dictionary<string, App> AllApps = new Dictionary<string, App>();
-        public static void InitializeData()
+
+        public static List<App> AllApps;
+
+        public static List<App> FetchInstalled()
         {
-            XmlSerializer serializer = new XmlSerializer(new List<App>().GetType());
-            List<App> apps = new List<App>();
-            try
+            List<App> installed;
+            XmlSerializer xmlSerializer = new XmlSerializer(typeof(List<App>));
+            if (!File.Exists(FilePath))
+                File.Create(FilePath);
+            using (var stream = File.OpenRead(Data.FilePath))
             {
-                // Get Installed Apps
-                if (!File.Exists(Data.FilePath))
-                    File.Create(Data.FilePath);
-                using (var stream = File.OpenRead(Data.FilePath))
-                {
-                    apps = (List<App>)serializer.Deserialize(stream);
-                }
+                installed = (List<App>)xmlSerializer.Deserialize(stream);
             }
-            catch (Exception)
+            return installed;
+        }
+
+        public static List<App> FetchAll()
+        {
+            // TODO: error in xml document
+
+            List<App> all = new List<App>();
+            XmlSerializer xmlSerializer = new XmlSerializer(typeof(List<App>));
+            using (var stream = new WebClient().OpenRead(@"https://tsunamisoftware.netlify.app/internal/toolbox/apps.xml"))
             {
-                Console.WriteLine("An error occured when loading Apps");
+                all = (List<App>)xmlSerializer.Deserialize(stream);
             }
-            try
-            {
-                // Get All Apps
-                List<App> temp_;
-                using (var stream = new WebClient().OpenRead(@"https://drive.google.com/uc?export=download&id=1_41S7QCoEz4MdCF4X6W5zj33oWFL0AOZ"))
-                {
-                    temp_ = (List<App>)serializer.Deserialize(stream);
-                }
-                foreach (App app in temp_)
-                {
-                    bool matched = false;
-                    foreach (App comp_app in apps)
-                    {
-                        if (comp_app.Name == app.Name) matched = true;
-                    }
-                    if (matched) continue;
-                    apps.Add(app);
-                }
-            }
-            catch (Exception)
-            {
-                Console.WriteLine("An error occured when loading Apps");
-            }
-            // Finish
-            if (apps != null && apps.Count > 0)
-            {
-                InstalledPanel.Apps = apps;
-            }
+            return all;
         }
 
         public static void Store(List<App> apps)

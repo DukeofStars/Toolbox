@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31727.386
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31912.275
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToolBox2.0", "ToolBox2.0.csproj", "{4AF7210E-1B26-44EB-835D-CD9D3EB97A48}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToolBox", "ToolBox.csproj", "{4AF7210E-1B26-44EB-835D-CD9D3EB97A48}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

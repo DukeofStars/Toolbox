@@ -43,6 +43,7 @@ namespace ToolBox2.Pages
             this.AppNameLBL.TabIndex = 0;
             this.AppNameLBL.Text = "NULL";
             this.AppNameLBL.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.AppNameLBL.MouseClick += new System.Windows.Forms.MouseEventHandler(this.Execute);
             // 
             // btn_install
             // 
@@ -64,6 +65,7 @@ namespace ToolBox2.Pages
             this.Controls.Add(this.btn_install);
             this.Controls.Add(this.AppNameLBL);
             this.Name = "AppButton";
+            this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.Execute);
             this.ResumeLayout(false);
 
         }

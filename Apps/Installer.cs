@@ -5,32 +5,40 @@ using System.Net;
 using System.Diagnostics;
 using System.Security.AccessControl;
 using System.Security.Principal;
-using System.Threading;
 using System.Windows.Forms;
+using System.Threading.Tasks;
 
 using ToolBox2.Main;
+using ToolBox2.Util;
 
 namespace ToolBox2.Apps
 {
     public class Installer
     {
         private App App;
-        private string MainPath;
+        public static string MainPath;
         private string AppMainPath;
-        private string TempPath;
+        public static string TempPath;
         private static int amountOfInstallers;
         private LoadingForm progress;
         private event EventHandler InstallComplete;
+
+        //public static List<(App, App)> updateQueue = new List<(App, App)>();
+
         public static void Install(App app)
         {
             Installer installer = new Installer(app);
-            installer.Install();
+            installer.progress = new LoadingForm();
+            installer.SetProgressVisible(true);
+            Task.Run(() => installer.Install());
             installer.Close();
         }
 
         public static void UnInstall(App app)
         {
             Installer installer = new Installer(app);
+            installer.progress = new LoadingForm();
+            installer.SetProgressVisible(true);
             installer.UnInstall();
             installer.Close();
         }
@@ -39,83 +47,69 @@ namespace ToolBox2.Apps
         {
             Installer.amountOfInstallers++;
             this.App = app;
-            this.MainPath = Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
-                "StarSoft");
-            this.AppMainPath = Path.Combine(this.MainPath, this.App.Name);
-            this.TempPath = Path.Combine(this.MainPath, "temp");
+            AppMainPath = Path.Combine(MainPath, this.App.Name);
             this.InstallComplete += this.Finished;
         }
 
-        public void UnInstall()
+        static Installer()
+        {
+            MainPath = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
+                "StarSoft");
+            TempPath = Path.Combine(MainPath, "temp");
+        }
+
+        public void UnInstall(bool showProgress = true)
         {
             // Delete Files
+            if (showProgress)
+                progress.Invoke(new Action(() => BringProgressToFront()));
             try
             {
+                if (showProgress)
+                    progress.Invoke(new Action(() => SetStatus("Checking for uninstall.exe")));
                 if (File.Exists(this.AppMainPath + @"\uninstall.exe"))
                     Process.Start(this.AppMainPath + @"\uninstall.exe");
+                if (showProgress)
+                {
+                    progress.Invoke(new Action(() => Step()));
+                    progress.Invoke(new Action(() => SetStatus("Deleting files")));
+                }
                 if (Directory.Exists(this.AppMainPath))
                     Directory.Delete(this.AppMainPath, true);
                 if (this.App.HasConfig && Directory.Exists(this.App.ConfigFolderPath))
                     Directory.Delete(this.App.ConfigFolderPath);
+                if (showProgress)
+                    progress.Invoke(new Action(() => Step()));
             }
             catch (UnauthorizedAccessException)
             {
-                Util.Utilities.RestartWithAdmin();
+                if (showProgress)
+                    progress.Invoke(new Action(() => progress.Close()));
+                Utilities.RestartWithAdmin();
                 return;
             }
 
             // Finish up
+            if (showProgress)
+                progress.Invoke(new Action(() => SetStatus("Finishing")));
             this.App.Installed = false;
-        }
-
-        public void Install()
-        {
-            // Initialize
-            progress = new LoadingForm
+            if (showProgress)
             {
-                Visible = true,
-                Status = "Initializing",
-                Enabled = true,
-                Progress = 0,
-                MaxLength = 4,
-                StepLength = 1
-            };
-            progress.BringToFront();
-            ThreadStart threadStart = new ThreadStart(() => this.RunInstall());
-            Thread thread = new Thread(threadStart);
-            thread.Name = "installingthread" + Installer.amountOfInstallers;
-            thread.Start();
-        }
-
-        public void Finished(object sender, EventArgs e)
-        {
-            if (sender is InstallResult.INSTALLED)
-            {
-                MessageBox.Show("Install Complete");
-                Header.SetPage(Page.UNINSTALLED);
+                progress.Invoke(new Action(() => Step()));
+                progress.Invoke(new Action(() => InstallComplete(InstallResult.UNINSTALLED, null)));
             }
-            else
-            {
-                MessageBox.Show("UnInstall Complete");
-                Header.SetPage(Page.INSTALLED);
-            }
-            this.progress.Visible = false;
-            this.progress.Enabled = false;
-            this.progress.Dispose();
-            MainWindow.self.InstalledPage.Refresh();
-            MainWindow.self.UnInstalledPage.Refresh();
-            MainWindow.self.Update();
         }
 
-        private void RunInstall()
+        public void Install(bool showProgress = true)
         {
-            this.progress.Invoke(new Action(() => this.BringProgressToFront()));
+            if (showProgress)
+                progress.Invoke(new Action(() => BringProgressToFront()));
             try
             {
-                if (!Directory.Exists(this.MainPath))
-                    Directory.CreateDirectory(this.MainPath);
-                DirectoryInfo info = new DirectoryInfo(this.MainPath);
+                if (!Directory.Exists(MainPath))
+                    Directory.CreateDirectory(MainPath);
+                DirectoryInfo info = new DirectoryInfo(MainPath);
                 DirectorySecurity security = info.GetAccessControl();
                 WindowsIdentity currentUserIdentity = WindowsIdentity.GetCurrent();
                 FileSystemAccessRule fileSystemRule = new FileSystemAccessRule(
@@ -130,39 +124,78 @@ namespace ToolBox2.Apps
             }
             catch (UnauthorizedAccessException)
             {
-                this.progress.Invoke(new Action(() => this.SetProgressVisible(false)));
+                if (showProgress)
+                    progress.Invoke(new Action(() => SetProgressVisible(false)));
                 Util.Utilities.RestartWithAdmin();
                 return;
             }
-            this.progress.Invoke(new Action(() => this.Step()));
+            if (showProgress)
+                progress.Invoke(new Action(() => Step()));
 
             // Download
-            this.progress.Invoke(new Action(() => this.SetStatus("Downloading")));
-            string tempZipPath = this.TempPath + @"\file" + Installer.amountOfInstallers + ".zip";
-            if (!Directory.Exists(this.TempPath))
-                Directory.CreateDirectory(this.TempPath);
+            if (showProgress)
+                progress.Invoke(new Action(() => SetStatus("Downloading")));
+            string tempZipPath = TempPath + @"\file" + Installer.amountOfInstallers + ".zip";
+            if (!Directory.Exists(TempPath))
+                Directory.CreateDirectory(TempPath);
             WebClient webClient = new WebClient();
             webClient.DownloadFile(this.App.OnlineFilePath, tempZipPath);
-            this.progress.Invoke(new Action(() => this.Step()));
+            if (showProgress)
+                progress.Invoke(new Action(() => Step()));
 
             // Extract
-            this.progress.Invoke(new Action(() => this.SetStatus("Extracting")));
+            if (showProgress)
+                progress.Invoke(new Action(() => SetStatus("Extracting")));
             if (Directory.Exists(this.AppMainPath))
                 Directory.Delete(this.AppMainPath, true);
             Directory.CreateDirectory(this.AppMainPath);
             ZipFile.ExtractToDirectory(tempZipPath, this.AppMainPath);
-            this.progress.Invoke(new Action(() => this.Step()));
+            if (showProgress)
+                progress.Invoke(new Action(() => Step()));
 
             // Finish up
-            this.progress.Invoke(new Action(() => this.SetStatus("Finishing")));
-            Directory.Delete(this.TempPath, true);
+            if (showProgress)
+                progress.Invoke(new Action(() => SetStatus("Finishing")));
+            Directory.Delete(TempPath, true);
             if (File.Exists(this.AppMainPath + "install.exe"))
             {
                 Process.Start(this.AppMainPath + "install.exe");
             }
             this.App.Installed = true;
-            this.progress.Invoke(new Action(() => this.Step()));
-            this.progress.Invoke(new Action(() => this.InstallComplete(InstallResult.INSTALLED, null)));
+            if (showProgress)
+            {
+                progress.Invoke(new Action(() => Step()));
+                progress.Invoke(new Action(() => InstallComplete(InstallResult.INSTALLED, null)));
+            }
+        }
+
+        public void Finished(object sender, EventArgs e)
+        {
+            if (sender is InstallResult.INSTALLED)
+            {
+                MessageBox.Show("Installation Complete");
+                Header.SetPage(Page.UNINSTALLED);
+            }
+            else if (sender is InstallResult.UNINSTALLED)
+            {
+                MessageBox.Show("UnInstallation Complete");
+                Header.SetPage(Page.INSTALLED);
+            }
+            else if (sender is InstallResult.UPDATE)
+            {
+                MessageBox.Show("Update Complete");
+                Header.SetPage(Page.INSTALLED);
+            }
+            else if (sender is InstallResult.FAILED)
+            {
+                MessageBox.Show("Failed");
+            }
+            this.progress.Visible = false;
+            this.progress.Enabled = false;
+            this.progress.Dispose();
+            MainWindow.self.InstalledPage.Refresh();
+            MainWindow.self.UnInstalledPage.Refresh();
+            MainWindow.self.Invalidate();
         }
 
         public void Close()
@@ -196,6 +229,7 @@ namespace ToolBox2.Apps
     {
         INSTALLED,
         UNINSTALLED,
+        UPDATE,
         FAILED
     }
 }
